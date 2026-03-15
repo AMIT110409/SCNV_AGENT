@@ -42,7 +42,10 @@ class Neo4jMemoryNode:
             RETURN alt_dc.id AS alternative_dc, s.quantity AS available
             LIMIT 3
             """
-            with self.driver.session() as session:
+            db_name = os.getenv("NEO4J_DATABASE")
+            session_kwargs = {"database": db_name} if db_name else {}
+            
+            with self.driver.session(**session_kwargs) as session:
                 try:
                     result = session.run(query, source=source, sku=sku)
                     for record in result:
